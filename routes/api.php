@@ -13,8 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::post('login', 'PassportController@login');
+Route::post('login', 'PassportController@login')->name('login');
 Route::post('register', 'PassportController@register');
 
 Route::middleware('auth:api')->group(function () {
+    Route::resource('appointments', 'AppointmentController');
 });

@@ -23,7 +23,8 @@ class AppointmentController extends Controller
     {
         $this->validate($request, [
             'date' => 'required',
-            'time' => 'required'
+            'time' => 'required',
+            'active' => 'required',
         ]);
         DB::beginTransaction();
         try {
@@ -32,6 +33,8 @@ class AppointmentController extends Controller
             $appointment->time = $request->time;
             $appointment->active = $request->active;
             if (auth()->user()->appointments()->save($appointment)) {
+
+                $this->logCreatedActivity($appointment, 'save new Appointment', $appointment->toArray());
                 DB::commit();
                 return response()->json([
                     'success' => true,
@@ -51,6 +54,7 @@ class AppointmentController extends Controller
     public function update(Request $request, $id)
     {
         $appointment = auth()->user()->appointments()->find($id);
+        $beforeUpdateValues = $appointment->toArray();
 
         if (!$appointment) {
             return response()->json([
@@ -61,6 +65,8 @@ class AppointmentController extends Controller
         DB::beginTransaction();
         try {
             $updated = $appointment->fill($request->all())->save();
+            $afterUpdateValues = $appointment->getChanges();
+            $this->logUpdatedActivity($appointment, $beforeUpdateValues, $afterUpdateValues);
             DB::commit();
             return response()->json([
                 'success' => true
@@ -83,6 +89,7 @@ class AppointmentController extends Controller
                 'message' => 'Appointment not found'
             ], 400);
         }
+        $this->logDeletedActivity($appointment, 'delete Appointment model ');
         if ($appointment->delete()) {
             return response()->json([
                 'success' => true

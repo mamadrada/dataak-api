@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use App\User;
 use DB;
 use Auth;
-use Sentinel;
 
 class PassportController extends Controller
 {
@@ -16,7 +15,6 @@ class PassportController extends Controller
 
     public function register(Request $request)
     {
-
         $this->validate($request, [
             'first_name' => 'required|min:3',
             'last_name' => 'required|min:3',

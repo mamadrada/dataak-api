@@ -10,7 +10,7 @@ trait ActivityTraits
     public function logCreatedActivity($logModel, $changes, $request)
     {
         $activity = activity('create')
-            ->causedBy(\Sentinel::getUser())
+            ->causedBy(Auth::user())
             ->performedOn($logModel)
             ->withProperties(['attributes'=>$request])
             ->log($changes);
@@ -44,10 +44,10 @@ trait ActivityTraits
         ];
 
         $activity = activity('update')
-            ->causedBy(\Sentinel::getUser())
+            ->causedBy(Auth::user())
             ->performedOn($list)
             ->withProperties($properties)
-            ->log($changes.' made by '.\Sentinel::getUser()->first_name.' '.\Sentinel::getUser()->last_name);
+            ->log($changes.' made by '.Auth::user()->first_name.' '.Auth::user()->last_name);
 
         return true;
     }
@@ -61,7 +61,7 @@ trait ActivityTraits
         ];
 
         $activity = activity('delete')
-            ->causedBy(\Sentinel::getUser())
+            ->causedBy(Auth::user())
             ->performedOn($list)
             ->withProperties($properties)
             ->log($changeLogs);
@@ -79,23 +79,6 @@ trait ActivityTraits
 
         $activity = activity('login')
             ->causedBy(Auth::user())
-            ->performedOn($user)
-            ->withProperties($properties)
-            ->log($changes);
-
-        return true;
-    }
-    public function logLogoutDetails()
-    {
-        $user = \Sentinel::getUser();
-        $updated_at = Carbon::now()->format('d/m/Y H:i:s');
-        $properties = [
-            'attributes' =>['name'=>$user->first_name.' '.$user->last_name,'description'=>'Logout from the system at '.$updated_at]
-        ];
-        $changes = 'User '.$user->first_name.' '.$user->last_name.' loged out into the system';
-
-        $activity = activity('logout')
-            ->causedBy(\Sentinel::getUser())
             ->performedOn($user)
             ->withProperties($properties)
             ->log($changes);

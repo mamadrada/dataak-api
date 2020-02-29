@@ -18,4 +18,5 @@ Route::post('register', 'PassportController@register');
 
 Route::middleware('auth:api')->group(function () {
     Route::resource('appointments', 'AppointmentController');
+    Route::post('appointment/{appointment}/invite','InviteController@invite');
 });

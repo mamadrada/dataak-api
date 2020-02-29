@@ -21,7 +21,7 @@ class PassportController extends Controller
             'email' => 'required|email|unique:users',
             'mobile' => 'required|unique:users',
             'password' => 'required|min:6',
-            'image' => 'required',
+//            'image' => 'required',
         ]);
         DB::beginTransaction();
         try {
